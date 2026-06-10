@@ -23,6 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         CursorSupport.enableBackgroundCursorChanges()
+        UpdateChecker.shared.start()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = MenuBarIcon.image
@@ -126,6 +127,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         menu.addItem(.separator())
 
+        if let version = UpdateChecker.shared.availableVersion {
+            let update = NSMenuItem(title: "Update available (v\(version))…", action: #selector(updateClicked), keyEquivalent: "")
+            update.target = self
+            menu.addItem(update)
+            menu.addItem(.separator())
+        }
+
         if Self.devMode {
             let test = NSMenuItem(title: "Show Test Notification", action: #selector(testNotification), keyEquivalent: "t")
             test.target = self
@@ -185,6 +193,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func testNotification() {
         NotificationPanelController.shared.showTest()
+    }
+
+    @objc private func updateClicked() {
+        guard let version = UpdateChecker.shared.availableVersion else { return }
+        NSApp.activate(ignoringOtherApps: true)
+        let alert = NSAlert()
+        alert.messageText = "Next Call v\(version) is available"
+        alert.informativeText = "You have v\(UpdateChecker.currentVersion). Upgrade with:\n\nbrew update && brew upgrade --cask next-call"
+        alert.addButton(withTitle: "Copy Command")
+        alert.addButton(withTitle: "Open Releases")
+        alert.addButton(withTitle: "Later")
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString("brew update && brew upgrade --cask next-call", forType: .string)
+        case .alertSecondButtonReturn:
+            NSWorkspace.shared.open(URL(string: "https://github.com/vvo/next-call/releases/latest")!)
+        default:
+            break
+        }
     }
 
     @objc func openSettings() {

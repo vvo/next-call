@@ -32,7 +32,8 @@ open "Next Call.app"
 - Flags calls where everyone else declined, like a 1:1 where the other person said no
 - Remind me at start time, copy the call link, pick your notification sound
 - Choose which calendars to watch
-- Local only. Reads your Apple Calendar (EventKit). No account, no server, nothing leaves your Mac
+- Local only. Reads your Apple Calendar (EventKit). No account, no server. The only network call is a version check against GitHub releases
+- Tells you in the menu when a new version is available
 - Start at login
 
 ## Permissions

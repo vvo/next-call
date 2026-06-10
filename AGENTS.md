@@ -33,6 +33,7 @@ Calendar permission (TCC) is tied to the app bundle. Always run the built app, n
 - `Sources/SettingsView.swift`: calendar checkboxes, sound picker, launch at login
 - `Sources/CursorSupport.swift`: private CGS call so the hand cursor shows while the app is in the background
 - `Sources/MenuBarIcon.swift`: vector-drawn template version of the app icon for the status item
+- `Sources/UpdateChecker.swift`: polls GitHub releases every 6h, surfaces an "Update available" menu item
 - `scripts/icon.swift` + `scripts/make-icns.sh`: regenerate AppIcon.icns from code
 
 ## Gotchas, learned the hard way
