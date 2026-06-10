@@ -45,19 +45,20 @@ final class CalendarService: ObservableObject {
         UserDefaults.standard.set(Array(selectedCalendarIDs), forKey: Self.defaultsKey)
     }
 
-    func upcomingEvents(within interval: TimeInterval) -> [EKEvent] {
+    // `includeOngoing` also keeps events already underway (started but not ended).
+    func upcomingEvents(within interval: TimeInterval, includeOngoing: Bool = false) -> [EKEvent] {
         guard authorized else { return [] }
         let calendars = store.calendars(for: .event).filter { selectedCalendarIDs.contains($0.calendarIdentifier) }
         guard !calendars.isEmpty else { return [] }
         let now = Date()
         let predicate = store.predicateForEvents(withStart: now, end: now.addingTimeInterval(interval), calendars: calendars)
         return store.events(matching: predicate)
-            .filter { !$0.isAllDay && $0.startDate > now && isAttending($0) }
+            .filter { !$0.isAllDay && (includeOngoing ? $0.endDate > now : $0.startDate > now) && isAttending($0) }
             .sorted { $0.startDate < $1.startDate }
     }
 
-    func upcomingMeetings(within interval: TimeInterval) -> [(EKEvent, MeetingLink)] {
-        upcomingEvents(within: interval).compactMap { event in
+    func upcomingMeetings(within interval: TimeInterval, includeOngoing: Bool = false) -> [(EKEvent, MeetingLink)] {
+        upcomingEvents(within: interval, includeOngoing: includeOngoing).compactMap { event in
             MeetingLinkDetector.detect(in: event).map { (event, $0) }
         }
     }

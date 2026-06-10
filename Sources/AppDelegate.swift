@@ -113,7 +113,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let now = Date()
         let endOfWeek = Calendar.current.dateInterval(of: .weekOfYear, for: now)!.end
 
-        let meetings = CalendarService.shared.upcomingMeetings(within: max(endOfWeek.timeIntervalSince(now), 0))
+        let meetings = CalendarService.shared.upcomingMeetings(within: max(endOfWeek.timeIntervalSince(now), 0), includeOngoing: true)
             .prefix(8)
 
         if meetings.isEmpty {
@@ -163,7 +163,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func meetingItem(event: EKEvent, link: MeetingLink) -> NSMenuItem {
-        let time = menuTimeLabel(for: event.startDate)
+        let now = Date()
+        let inProgress = event.startDate <= now && event.endDate > now
+        let time = inProgress ? "Now" : menuTimeLabel(for: event.startDate)
         let title = truncated(event.title ?? "Untitled", max: 36)
         let item = NSMenuItem(
             title: "\(time)   \(title)",
