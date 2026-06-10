@@ -2,7 +2,9 @@
 
 A macOS menu bar app that shows a notification 1 minute before your next video call, with a one-click Join button. Never be late because the call link was buried in some calendar tab.
 
-![Next Call notification](screenshot.png)
+<p align="center">
+  <img src="screenshot.png" alt="Next Call menu bar, call list and join notification" width="935">
+</p>
 
 ## Install
 
