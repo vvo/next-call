@@ -1,6 +1,6 @@
 cask "next-call" do
-  version "0.1.1"
-  sha256 "a15b61d97acf44113cfdf6a29fc270a768c9f2d795d228553af093ead63e9652"
+  version "0.2.0"
+  sha256 "4168a01f7b576d71526fbdf340ab942bc47047a9aa8a1a5327d45d69fad57103"
 
   url "https://github.com/vvo/next-call/releases/download/v#{version}/NextCall.zip"
   name "Next Call"
