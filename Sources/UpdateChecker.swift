@@ -5,6 +5,7 @@ final class UpdateChecker {
 
     private(set) var availableVersion: String?
     private var timer: Timer?
+    private var lastCheck: Date?
 
     func start() {
         check()
@@ -14,7 +15,15 @@ final class UpdateChecker {
         timer?.tolerance = 600
     }
 
+    // Cheap to call often (e.g. on menu open), real check at most every 15 min.
+    func checkIfStale() {
+        if Date().timeIntervalSince(lastCheck ?? .distantPast) > 15 * 60 {
+            check()
+        }
+    }
+
     private func check() {
+        lastCheck = Date()
         guard let url = URL(string: "https://api.github.com/repos/vvo/next-call/releases/latest") else { return }
         var request = URLRequest(url: url)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")

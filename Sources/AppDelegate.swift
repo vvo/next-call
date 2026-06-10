@@ -107,6 +107,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
+        UpdateChecker.shared.checkIfStale()
         menu.removeAllItems()
 
         let now = Date()
