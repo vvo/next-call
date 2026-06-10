@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Get version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update Info.plist version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Info.plist
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Create zip
+        run: ditto -c -k --keepParent "Next Call.app" NextCall.zip
+
+      - name: Update cask
+        run: |
+          SHA=$(shasum -a 256 NextCall.zip | awk '{print $1}')
+          sed -i '' "s/version \".*\"/version \"${{ steps.version.outputs.version }}\"/" Casks/next-call.rb
+          sed -i '' "s/sha256 \".*\"/sha256 \"$SHA\"/" Casks/next-call.rb
+
+      - name: Commit updated cask
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git pull origin main
+          git add Casks/next-call.rb
+          git commit -m "Update cask to v${{ steps.version.outputs.version }}"
+          git push origin main
+
+      - name: Create release
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
+        with:
+          files: NextCall.zip
+          generate_release_notes: true

@@ -42,6 +42,14 @@ Calendar permission (TCC) is tied to the app bundle. Always run the built app, n
 - `NSCursor.set()` is ignored for background apps. CursorSupport.swift enables it via the CGS `SetsCursorInBackground` connection property (same trick as iTerm2).
 - Provider logos live in `Sources/Resources/logos` and ship via the SPM resource bundle, which build.sh copies into the app.
 
+## Releases
+
+Tag and push, CI does the rest: builds, zips, bumps the cask sha/version on main, creates the GitHub release.
+
+```bash
+git tag v0.2.0 && git push origin v0.2.0
+```
+
 ## Conventions
 
 - No dependencies. AppKit + SwiftUI + EventKit only.
