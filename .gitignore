@@ -1,0 +1,6 @@
+.build/
+.DS_Store
+*.app/
+*.zip
+AppIcon.iconset/
+icon-1024.png
