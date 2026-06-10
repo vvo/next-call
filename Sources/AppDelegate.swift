@@ -144,6 +144,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         settings.target = self
         menu.addItem(settings)
 
+        let version = NSMenuItem(title: "Version \(UpdateChecker.currentVersion)", action: nil, keyEquivalent: "")
+        version.isEnabled = false
+        menu.addItem(version)
+
         menu.addItem(.separator())
 
         let quit = NSMenuItem(title: "Quit Next Call", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
