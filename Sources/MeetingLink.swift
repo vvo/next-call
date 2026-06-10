@@ -18,11 +18,22 @@ enum MeetingProvider: String, CaseIterable {
     }
 
     var logo: NSImage? {
-        guard let url = Bundle.module.url(forResource: rawValue, withExtension: "png", subdirectory: "logos") else {
+        guard let url = Self.resources.url(forResource: rawValue, withExtension: "png", subdirectory: "logos") else {
             return nil
         }
         return NSImage(contentsOf: url)
     }
+
+    // Bundle.module only checks the app root and the absolute path of the
+    // machine that compiled the binary, so it crashes when the app is
+    // installed elsewhere. Resolve Contents/Resources ourselves first.
+    private static let resources: Bundle = {
+        if let url = Bundle.main.url(forResource: "NextCall_NextCall", withExtension: "bundle"),
+           let bundle = Bundle(url: url) {
+            return bundle
+        }
+        return Bundle.module
+    }()
 }
 
 struct MeetingLink {
